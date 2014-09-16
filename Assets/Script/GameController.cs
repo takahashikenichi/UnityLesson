@@ -30,8 +30,12 @@ public class GameController : MonoBehaviour
 
 	private bool isFirst = true;
 
+	public static int currentNumber = 1;
+
 	//シャッフルする配列
 	int[] numberArray = new int[25];
+
+	private float timeRemaining = 1.0f;
 
 	// Use this for initialization
 	void Start ()
@@ -74,6 +78,9 @@ public class GameController : MonoBehaviour
 		case GameState.TITLE:
 						// タイトル状態でマウスで左クリックされたらプレイ状態へ
 			if (Input.GetMouseButtonUp (0)) {
+				// ゲームデータをリセット
+				currentNumber = 1;
+				// ステータスを変更
 				state = GameState.PLAYING;
 				// SpawnPointゲームオブジェクトにStartSpawn()関数を実行するようにメッセージを送る
 				// 宇宙ゴミの発生を開始
@@ -118,12 +125,19 @@ public class GameController : MonoBehaviour
 			break;
 
 		case GameState.TIMEUP:
-						// タイムアップ状態でマウスを左クリックで３秒後にタイトル状態にする
-			if (Input.GetMouseButtonUp (0)) {
-				state = GameState.TIMEUP_TO_TITLE;
-				isFirst = true;
-				DestroyAllObjects("cube");
-				StartCoroutine ("ShowTitleDelayed", 0f);
+			// 残り時間を引いてゆく
+			timeRemaining -= Time.deltaTime;
+			if (timeRemaining > 0) {
+				break;
+			} else {
+				timeRemaining = 0;
+				// タイムアップ状態でマウスを左クリックで３秒後にタイトル状態にする
+				if (Input.GetMouseButtonUp (0)) {
+					state = GameState.TIMEUP_TO_TITLE;
+					isFirst = true;
+					DestroyAllObjects("cube");
+					StartCoroutine ("ShowTitleDelayed", 0f);
+				}
 			}
 			break;
 		}
@@ -160,5 +174,24 @@ public class GameController : MonoBehaviour
 			//オブジェクトを削除
 			Destroy(obj);
 		}
+	}
+
+	void ResetCube() {
+		//FindGameObjectsWithTagメソッド指定のタグのインスタンスを配列で取得
+		GameObject[] objects = GameObject.FindGameObjectsWithTag("cube");
+
+		//配列内のオブジェクトの数だけループ
+		foreach (GameObject obj in objects) {
+			//オブジェクトを削除
+			TouchRotation touchRotation = obj.GetComponent<TouchRotation>();
+			if(touchRotation != null) {
+				touchRotation.rotateState = TouchRotation.RotateState.TOUCH_ALL_RETURN;
+			}
+			//			Destroy(obj);
+
+		}
+
+		FlashLight flashLight = GameObject.Find ("FlashLight").GetComponent<FlashLight> ();
+		flashLight.Flash();
 	}
 }
