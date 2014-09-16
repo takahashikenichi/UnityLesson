@@ -118,7 +118,7 @@ public class GameController : MonoBehaviour
 				// TimerコンポーネントのStopTimer()関数を実行。タイマーを停止。
 				timer.StopTimer ();
 				// 画面内の宇宙ゴミを全て削除する
-				DestroyAllDebris ();
+				DestroyAllObjects ("debri");
 				// タイムアップ画像を表示
 				guiTimeup.enabled = true;
 			}
@@ -137,6 +137,9 @@ public class GameController : MonoBehaviour
 					isFirst = true;
 					DestroyAllObjects("cube");
 					StartCoroutine ("ShowTitleDelayed", 0f);
+					timeRemaining  = 1.0f;
+					// 画面内の宇宙ゴミParticleを全て削除する
+					DestroyAllObjects ("debribroken");
 				}
 			}
 			break;
