@@ -4,7 +4,6 @@ using System.Collections;
 public class FlashLight : MonoBehaviour {
 
 	public float duration = 0.5F;
-	bool animating = false;
 
 	// ゲームの状態
 	public enum LightState

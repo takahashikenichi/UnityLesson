@@ -44,18 +44,6 @@ public class GameController : MonoBehaviour
 			numberArray[i] = i + 1;
 		}
 
-		//Fisher-Yatesアルゴリズムでシャッフルする
-		System.Random random = new System.Random();
-		int n = numberArray.Length;
-		while (n > 1)
-		{
-			n--;
-			int k = random.Next(n + 1);
-			int tmp = numberArray[k];
-			numberArray[k] = numberArray[n];
-			numberArray[n] = tmp;
-		}
-
 		// 状態をタイトルに
 		state = GameState.TITLE;
 		// タイトル画像を表示
@@ -96,6 +84,18 @@ public class GameController : MonoBehaviour
 		case GameState.PLAYING:
 						// プレイ中にTimerコンポーネントの残り時間が0になったらタイムアップ状態に
 			if(isFirst) {
+				//Fisher-Yatesアルゴリズムでシャッフルする
+				System.Random random = new System.Random();
+				int n = numberArray.Length;
+				while (n > 1)
+				{
+					n--;
+					int k = random.Next(n + 1);
+					int tmp = numberArray[k];
+					numberArray[k] = numberArray[n];
+					numberArray[n] = tmp;
+				}
+					
 				for(int x = 0; x < 5; x++) {
 					for(int y = 0; y < 5; y++) {
 						GameObject cubeInstance = Instantiate(cube, new Vector3(x * 12.0F - 24F, 74F - y * 12.0F, -100), Quaternion.identity) as GameObject;
@@ -180,18 +180,32 @@ public class GameController : MonoBehaviour
 	}
 
 	void ResetCube() {
+		//Fisher-Yatesアルゴリズムでシャッフルする
+		System.Random random = new System.Random();
+		int n = numberArray.Length;
+		while (n > 1)
+		{
+			n--;
+			int k = random.Next(n + 1);
+			int tmp = numberArray[k];
+			numberArray[k] = numberArray[n];
+			numberArray[n] = tmp;
+		}
+
 		//FindGameObjectsWithTagメソッド指定のタグのインスタンスを配列で取得
 		GameObject[] objects = GameObject.FindGameObjectsWithTag("cube");
 
+		int number = 0;
 		//配列内のオブジェクトの数だけループ
 		foreach (GameObject obj in objects) {
 			//オブジェクトを削除
 			TouchRotation touchRotation = obj.GetComponent<TouchRotation>();
 			if(touchRotation != null) {
 				touchRotation.rotateState = TouchRotation.RotateState.TOUCH_ALL_RETURN;
+				string numberString = ""  + numberArray[number];
+				touchRotation.SetNumber (numberString);
 			}
-			//			Destroy(obj);
-
+			number++;
 		}
 
 		FlashLight flashLight = GameObject.Find ("FlashLight").GetComponent<FlashLight> ();
