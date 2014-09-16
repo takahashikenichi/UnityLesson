@@ -11,6 +11,10 @@ public class Debri : MonoBehaviour
 	private Vector3 targetPos;
 	private Vector3 targetRot;
 	private bool targetWay;
+
+	// 破壊時のパーティクル
+	public GameObject brokenPrefab;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -38,5 +42,12 @@ public class Debri : MonoBehaviour
 		}
 		// 軸に沿って少し回転させる
 		transform.Rotate (targetRot, Time.deltaTime * 360 * 2, Space.Self);
+	}
+
+	void OnDestroy() {
+		// 破壊時のオブジェクトをインスタンス化
+		GameObject brokenParticle = Instantiate(brokenPrefab, transform.position, brokenPrefab.transform.rotation) as GameObject;
+		DebriBroken db = brokenParticle.GetComponent<DebriBroken> ();
+		db.SetTargetRot(targetRot, targetWay, angle);
 	}
 }
